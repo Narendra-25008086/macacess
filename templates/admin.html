@@ -1,44 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body class="bg-gray-900 text-white p-5">
+<body>
+<div class="page">
+<div class="main">
 
-<h2 class="text-2xl mb-3">Admin Panel</h2>
-
-<p class="mb-4">WiFi Password: <b class="text-green-400">{{ password }}</b></p>
+<h2>Admin Panel</h2>
+<p>Password: {{ password }}</p>
 
 <h3>Requests</h3>
-<table class="w-full bg-gray-800 mb-5">
-<tr><th>ID</th><th>Name</th><th>MAC</th><th>Status</th><th>Action</th></tr>
 
+<table>
 {% for r in requests %}
 <tr>
-<td>{{ r[0] }}</td>
 <td>{{ r[1] }}</td>
 <td>{{ r[2] }}</td>
 <td>{{ r[3] }}</td>
 <td>
-<form method="POST" class="flex gap-2">
+<form method="POST">
 <input type="hidden" name="id" value="{{ r[0] }}">
-
-<button name="action" value="approved" class="bg-green-500 px-2 rounded">✔</button>
-<button name="action" value="rejected" class="bg-yellow-500 px-2 rounded">✖</button>
-<button name="action" value="delete" class="bg-red-500 px-2 rounded"
-onclick="return confirm('Delete user?')">🗑</button>
-
+<button name="action" value="approved">✔</button>
+<button name="action" value="rejected">✖</button>
+<button name="action" value="delete">🗑</button>
 </form>
 </td>
 </tr>
 {% endfor %}
 </table>
 
-<h3>Access Logs</h3>
-<table class="w-full bg-gray-800">
-<tr><th>MAC</th><th>Time</th></tr>
-
+<h3>Logs</h3>
+<table>
 {% for l in logs %}
 <tr>
 <td>{{ l[1] }}</td>
@@ -47,5 +42,12 @@ onclick="return confirm('Delete user?')">🗑</button>
 {% endfor %}
 </table>
 
+</div>
+
+<footer>
+<p>MADE BY <span class="footer-name">NARENDRA KRISHAN KS (AIML)</span></p>
+</footer>
+
+</div>
 </body>
 </html>

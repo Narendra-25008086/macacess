@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body class="bg-gray-900 flex justify-center items-center h-screen">
+<body>
+<div class="page">
+<div class="main">
+<div class="card">
 
-<form method="POST" class="bg-gray-800 p-6 rounded text-white w-80">
-<h2 class="text-xl mb-4">Admin Login</h2>
+<h2>Admin(nkk) Login</h2>
 
-<input name="username" placeholder="Username" class="w-full mb-3 p-2 text-black rounded">
-<input name="password" type="password" placeholder="Password" class="w-full mb-3 p-2 text-black rounded">
-
-<button class="bg-blue-500 w-full py-2 rounded">Login</button>
+<form method="POST">
+<input name="username" placeholder="Username">
+<input name="password" type="password" placeholder="Password">
+<button>Login</button>
 </form>
+
+</div>
+</div>
+
+<footer>
+<p>MADE BY <span class="footer-name">NARENDRA KRISHAN KS (AIML)</span></p>
+</footer>
+
+</div>
 
 {% if error %}
 <script>
