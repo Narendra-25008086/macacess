@@ -7,18 +7,14 @@ app.secret_key = "secret123"
 ADMIN_USER = "naren"
 ADMIN_PASS = "250807"
 
-# -------------------------
-# Generate WiFi Password
-# -------------------------
+# Generate WiFi password
 def generate_password():
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for _ in range(8))
 
 WIFI_PASSWORD = generate_password()
 
-# -------------------------
-# Initialize Database
-# -------------------------
+# Initialize DB
 def init_db():
     conn = sqlite3.connect("hotspot.db")
     cur = conn.cursor()
@@ -45,9 +41,7 @@ def init_db():
 
 init_db()
 
-# -------------------------
 # DB helper
-# -------------------------
 def db_query(query, params=(), one=False):
     conn = sqlite3.connect("hotspot.db", check_same_thread=False)
     cur = conn.cursor()
@@ -57,29 +51,23 @@ def db_query(query, params=(), one=False):
     conn.close()
     return (data[0] if data else None) if one else data
 
-# -------------------------
 # Log access
-# -------------------------
 def log_access(mac):
     time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     db_query("INSERT INTO logs(mac, time) VALUES (?, ?)", (mac, time))
 
-# -------------------------
-# Static folder + QR
-# -------------------------
+# Create static folder
 if not os.path.exists("static"):
     os.makedirs("static")
 
+# Generate QR
 try:
-    # Replace with your deployed URL later
-    qr = qrcode.make("https://your-app.onrender.com")
+    qr = qrcode.make("https://macacess-2.onrender.com")
     qr.save("static/qr.png")
-except Exception as e:
-    print("QR generation error:", e)
+except:
+    pass
 
-# -------------------------
 # Routes
-# -------------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
     msg = ""
@@ -87,25 +75,27 @@ def index():
         name = request.form["name"]
         mac = request.form["mac"]
 
-        # Avoid duplicate MAC
         existing = db_query("SELECT * FROM requests WHERE mac=?", (mac,), one=True)
         if not existing:
             db_query("INSERT INTO requests(name, mac, status) VALUES (?, ?, 'pending')", (name, mac))
             msg = "Request Sent ✅"
         else:
-            msg = "Already requested ⚠️"
+            msg = "Already Requested ⚠️"
 
     return render_template("index.html", message=msg)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    error = None
+
     if request.method == "POST":
         if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
             session["admin"] = True
             return redirect("/admin")
         else:
-            return "Login Failed ❌"
-    return render_template("login.html")
+            error = "Invalid Username or Password"
+
+    return render_template("login.html", error=error)
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
@@ -115,7 +105,11 @@ def admin():
     if request.method == "POST":
         req_id = request.form["id"]
         action = request.form["action"]
-        db_query("UPDATE requests SET status=? WHERE id=?", (action, req_id))
+
+        if action == "delete":
+            db_query("DELETE FROM requests WHERE id=?", (req_id,))
+        else:
+            db_query("UPDATE requests SET status=? WHERE id=?", (action, req_id))
 
     requests = db_query("SELECT * FROM requests")
     logs = db_query("SELECT * FROM logs ORDER BY id DESC")
@@ -133,8 +127,5 @@ def password():
     else:
         return "Access Denied ❌"
 
-# -------------------------
-# Run (local only)
-# -------------------------
 if __name__ == "__main__":
     app.run(debug=True)

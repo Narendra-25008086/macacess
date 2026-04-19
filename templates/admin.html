@@ -21,10 +21,14 @@
 <td>{{ r[2] }}</td>
 <td>{{ r[3] }}</td>
 <td>
-<form method="POST">
+<form method="POST" class="flex gap-2">
 <input type="hidden" name="id" value="{{ r[0] }}">
-<button name="action" value="approved">✔</button>
-<button name="action" value="rejected">✖</button>
+
+<button name="action" value="approved" class="bg-green-500 px-2 rounded">✔</button>
+<button name="action" value="rejected" class="bg-yellow-500 px-2 rounded">✖</button>
+<button name="action" value="delete" class="bg-red-500 px-2 rounded"
+onclick="return confirm('Delete user?')">🗑</button>
+
 </form>
 </td>
 </tr>
